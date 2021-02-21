@@ -1,6 +1,6 @@
 #Programa para crear un .csv para luego importar a excel y que sea más facil hacer la trazabilidad
 
-#Columnas del excel: Día ZONA FILA MESA SUBMESA POSICIÓN CÓDIGO [Orig EL image] !!REVISAR¡¡
+#Columnas del excel: Día ZONA ALTURA FILA MESA SUBMESA POSICIÓN CÓDIGO [Orig EL image] !!REVISAR¡¡
 
 #POR HACER: funcion que asigne un identificador a los modules que forman parte de la misma mesa, pero que
 # estan a diferentes alguras y, si puede ser, que los ordene por filas/mesas
@@ -13,8 +13,8 @@ lista_ordenadores = ["s","f"] #Para comprobar que se introduce un ordenador corr
 lista_alturas = ["H","L"] #High y Low
 
 #Ubicacion de los archivos
-file_path_saul = "saul_prueba.csv"
-file_path_felix = "felix_prueba.csv"
+file_path_saul = "SA_EL_Alcazares.csv"
+file_path_felix = "FF_EL_Alcazares.csv"
 
 #Funciones
 
@@ -78,7 +78,26 @@ def pedir_info_posicion():
 
     return zona,fila,mesa,altura
 
+def pedir_info_zona_fila():
+    #Similar a pedir_info_posicion, pero solo pide los valores que necesita auto_crear_info_mesas
+    while True:
+        zona = str(input("Zona: ")).upper() #A,B,C,D
+        if zona in lista_zonas:
+            break
+        else:
+            print("Las zonas son: ", lista_zonas)
 
+    while True:
+        try:
+            fila = int(input("Numero de fila: ")) #1,2,3,4...
+        except ValueError:
+            print("Fila debe ser un número. Prueba otra vez.")
+            continue
+        else:
+            fila = str(fila)
+            break
+
+    return zona,fila
 
 def pedir_tipo_mesa():
     # Solicita al usuario info el tipo de mesa, interior(14 modulos) o exterior(28 modulos)
@@ -90,8 +109,7 @@ def pedir_tipo_mesa():
             print("Las mesas deben ser de 14 o de 28")
     return tipo_mesa
 
-#CAMBIAR PARA SAUL Y FELIX
-def pedir_ordenador(file_path_dani,file_path_otro):
+def pedir_ordenador(file_path_saul, file_path_felix):
     #Pide al usuario el nombre del ordenador donde estan las fotos. Dani o ¿Saul?
     while True:
         ordenador = str(input("Ordenador de Saúl (s) o Felix (f): "))
@@ -169,11 +187,80 @@ def crear_info_mesa(num_ultima_foto,dia_completo,file_path_escogido):
         num_ultima_foto = num_foto_temporal
     return lista_codigos, lista_csv,num_ultima_foto
 
+def pedir_info_mesas():
+    #Solicita al usuario la posicion de la primera mesa y el numero de mesas del string
+    #Esta información sirve para, con otro funcion, crear el nombre de cada modulo/foto
+    string_dict = {} #Almacena la posicion y tamaño de cada mesa
+    while True:
+        try:
+            num_mesas_string = int(input("Introduce el numero de mesas en el string: "))
+        except ValueError:
+            print("El numero de mesas debe ser un número. Prueba otra vez.")
+        else:
+            break
+
+    while True:
+        try:
+            pos_primera_mesa = int(input("Introduce la posicion de la primera mesa: "))
+        except ValueError:
+            print("La posición debe ser un número. Prueba otra vez.")
+            continue
+        else:
+            break
+
+    for num in range(0,num_mesas_string):
+        print("Mesa número: ",(num + pos_primera_mesa))
+        string_dict[num] = pedir_tipo_mesa()
+    return pos_primera_mesa,string_dict
+
+def auto_crear_info_mesa(pos_primera_mesa,string_dict,num_ultima_foto):
+    #Coge la información introducida por el usuario, crea el codigo para cada modulo, calcula el numero de foto
+    #correspondiente y muestra la información al usuario
+    zona,fila = pedir_info_zona_fila()
+    lista_codigos = []
+    lista_csv = []
+    num_foto_temporal = num_ultima_foto #Guarda el numero de la ultima foto antes de modificarlo
+    #Creamos los codigos en funcion de si la mesa es de interior o exterior
+    print("Iniciando introducción de datos")
+    for altura in lista_alturas:
+        for key,value in string_dict.items():
+            if value == "14":
+                for posicion in range(1, 8):
+                    if posicion % 2 != 0:
+                        num_ultima_foto += 1
+                    mesa = str(key + pos_primera_mesa)
+                    nombre_foto = prefijo_foto + str(num_ultima_foto).zfill(5)
+                    codigo = zona + "-" + altura + "-" + zona + fila + "." + mesa + "-" + str(posicion)
+                    lista_codigos.append(codigo)
+                    fila_csv = dia_completo + "," + zona + "," + altura + "," + fila + "," + mesa + "," + str(posicion) + \
+                               "," + codigo + "," + nombre_foto
+                    lista_csv.append(fila_csv)
+                print("Comprueba la información: ")
+                print("Inicio de la fila: ", lista_codigos[0])
+                print("Final de la fila: ", lista_codigos[6])
+            elif value == "28":
+                for posicion in range(1, 15):
+                    if posicion % 2 != 0:
+                        num_ultima_foto += 1
+                    mesa = str(key + pos_primera_mesa)
+                    nombre_foto = prefijo_foto + str(num_ultima_foto).zfill(5)
+                    codigo = zona + "-" + altura + "-" + zona + fila + "." + mesa + "-" + str(posicion)
+                    lista_codigos.append(codigo)
+                    fila_csv = dia_completo + "," + zona + "," + altura + "," + fila + "," + mesa + "," + str(posicion) + \
+                               "," + codigo + "," + nombre_foto
+                    lista_csv.append(fila_csv)
+                print("Comprueba la información: ")
+                print("Inicio de la fila: ", lista_codigos[0])
+                print("Final de la fila: ", lista_codigos[13])
+    confirmacion = pasar_info_csv(lista_csv, file_path_escogido)
+    if confirmacion == "n":
+        num_ultima_foto = num_foto_temporal
+    return lista_codigos, lista_csv, num_ultima_foto
+
 def mostrar_info(lista_codigos):
     #ESTA FUNCION ESTA SIN USAR
     # Muestra el codigo para varias fotos para comprobar que es correcto y pide confirmación al usuario
     print(lista_codigos)
-
 
 def leer_ultimo_num_foto(file_path_escogido):
     #Lee el último número de foto para poder continuar la cuenta
@@ -200,7 +287,9 @@ def escoger_num_foto(num_ultima_foto):
     return num_ultima_foto
 
 
-#Main program
+
+#PROGRAMA PRINCIPAL
+
 prefijo_foto, file_path_escogido = pedir_ordenador(file_path_saul, file_path_felix)
 num_ultima_foto = leer_ultimo_num_foto(file_path_escogido)
 dia_completo = pedir_dia()
@@ -217,6 +306,7 @@ while True:
     elif opcion == "foto":
         num_ultima_foto = escoger_num_foto(num_ultima_foto)
     elif opcion == "s":
-        lista_codigos, lista_csv,num_ultima_foto = crear_info_mesa(num_ultima_foto,dia_completo,file_path_escogido)
+        pos_primera_mesa, string_dict = pedir_info_mesas()
+        lista_codigos, lista_csv,num_ultima_foto = auto_crear_info_mesa(pos_primera_mesa,string_dict,num_ultima_foto)
     else:
         print("Opcion incorrecta. Escoge entre (cerrar/ordenador/fecha/s)")
