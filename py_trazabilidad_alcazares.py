@@ -222,6 +222,7 @@ def auto_crear_info_mesa(pos_primera_mesa,string_dict,num_ultima_foto):
     num_foto_temporal = num_ultima_foto #Guarda el numero de la ultima foto antes de modificarlo
     #Creamos los codigos en funcion de si la mesa es de interior o exterior
     print("Iniciando introducción de datos")
+    print("Comprueba la información: ")
     for altura in lista_alturas:
         for key,value in string_dict.items():
             if value == "14":
@@ -235,9 +236,10 @@ def auto_crear_info_mesa(pos_primera_mesa,string_dict,num_ultima_foto):
                     fila_csv = dia_completo + "," + zona + "," + altura + "," + fila + "," + mesa + "," + str(posicion) + \
                                "," + codigo + "," + nombre_foto
                     lista_csv.append(fila_csv)
-                print("Comprueba la información: ")
-                print("Inicio de la fila: ", lista_codigos[0])
-                print("Final de la fila: ", lista_codigos[6])
+                    if posicion == 1:
+                        print("Inicio de la fila: ", lista_codigos[-1])
+                    elif posicion == 7:
+                        print("Fin de la fila: ", lista_codigos[-1])
             elif value == "28":
                 for posicion in range(1, 15):
                     if posicion % 2 != 0:
@@ -249,9 +251,10 @@ def auto_crear_info_mesa(pos_primera_mesa,string_dict,num_ultima_foto):
                     fila_csv = dia_completo + "," + zona + "," + altura + "," + fila + "," + mesa + "," + str(posicion) + \
                                "," + codigo + "," + nombre_foto
                     lista_csv.append(fila_csv)
-                print("Comprueba la información: ")
-                print("Inicio de la fila: ", lista_codigos[0])
-                print("Final de la fila: ", lista_codigos[13])
+                    if posicion == 1:
+                        print("Inicio de la fila: ", lista_codigos[-1])
+                    elif posicion == 14:
+                        print("Fin de la fila: ", lista_codigos[-1])
     confirmacion = pasar_info_csv(lista_csv, file_path_escogido)
     if confirmacion == "n":
         num_ultima_foto = num_foto_temporal
