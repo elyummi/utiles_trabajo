@@ -1,0 +1,17 @@
+  Container No.          Unnamed: 1  ...       Unnamed: 9          Unnamed: 10
+0           NO.          Serial No.  ...  Current Sorting            Test Date
+1             1  4BZ0H2000086720222  ...               I3  2022-01-11 00:00:00
+2             1  4BZ0H2000086710222  ...               I3  2022-01-11 00:00:00
+3             1  4BZ0H2000086680222  ...               I3  2022-01-11 00:00:00
+4             1  4BZ0H2000086670222  ...               I3  2022-01-11 00:00:00
+
+   NO.          Serial No.  ... Current Sorting  Test Date
+0  1.0  4BZ0H2000086720222  ...              I3 2022-01-11
+1  1.0  4BZ0H2000086710222  ...              I3 2022-01-11
+2  1.0  4BZ0H2000086680222  ...              I3 2022-01-11
+3  1.0  4BZ0H2000086670222  ...              I3 2022-01-11
+4  1.0  4BZ0H2000086450222  ...              I3 2022-01-11
+
+Index(['NO.', 'Serial No.', 'Module Type', 'Uoc [V]', 'Isc [A]', 'Umpp [V]',
+       'Impp [A]', 'Pmpp [W]', 'Pallet No.', 'Current Sorting', 'Test Date'],
+      dtype='object')
